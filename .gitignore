@@ -1,0 +1,12 @@
+# Presentation build artifacts (regenerable)
+tech-analysis/aws-terraform/presentation/build/node_modules/
+tech-analysis/aws-terraform/presentation/build/.venv/
+tech-analysis/aws-terraform/presentation/build/screenshots/
+tech-analysis/aws-terraform/presentation/build/audio/
+tech-analysis/aws-terraform/presentation/build/clips/
+tech-analysis/aws-terraform/presentation/build/concat.list
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/

@@ -1,0 +1,64 @@
+{
+  "sections": [
+    {
+      "id": "hero",
+      "selector": "header.hero",
+      "title": "타이틀",
+      "narration": "오늘은 AWS 인프라를 코드로 관리하기 위해 Terraform을 처음 도입하는 작업을 진행했습니다. AWS CLI도 Terraform도 설치되어 있지 않고, AWS 자격증명도 없는 상태에서 시작해, 코드로 정의한 VPC가 실제 AWS에 떠 있는 상태까지 도달했습니다."
+    },
+    {
+      "id": "s1",
+      "selector": "#s1",
+      "title": "오늘의 흐름",
+      "narration": "전체 작업은 다섯 단계로 진행되었습니다. 첫째, 환경 셋업. AWS CLI와 Terraform을 설치하고 IAM 사용자를 만들었습니다. 둘째, 프로젝트 구조 설계. 셋째, VPC를 실제 AWS에 배포. 넷째, 결과 검증과 깃 커밋. 다섯째, 다섯 개의 문서로 작업을 정리했습니다."
+    },
+    {
+      "id": "s2",
+      "selector": "#s2",
+      "title": "환경 셋업",
+      "narration": "먼저 Homebrew로 AWS CLI를 설치하고, Terraform을 설치했습니다. 여기서 작은 함정 하나. Terraform은 2023년에 라이선스를 BSL로 변경하면서 Homebrew core 저장소에서 빠졌기 때문에, HashiCorp의 공식 tap을 추가한 뒤 설치해야 합니다. 다음은 자격증명. AWS 콘솔에서 IAM 사용자를 새로 만들고, 학습 목적이므로 AdministratorAccess를 부여한 다음 Access Key를 생성했습니다. 루트 계정의 키를 직접 사용하는 것은 결제 정보까지 노출시킬 위험이 있어 절대 금지입니다."
+    },
+    {
+      "id": "s3",
+      "selector": "#s3",
+      "title": "프로젝트 구조",
+      "narration": "프로젝트 구조는 처음이라 모듈로 분리하지 않고 한 폴더에 평탄하게 두었습니다. 학습 단계에서는 파일이 어디에 있는지 한눈에 보이는 게 더 중요하기 때문입니다. 핵심 파일은 일곱 개. provider.tf에서는 Terraform 버전과 AWS provider 버전을 핀하고, AWS 리전과 프로파일을 지정합니다. 특히 default_tags 블록은 모든 리소스에 자동으로 Project, Environment, ManagedBy 태그를 붙여 줍니다."
+    },
+    {
+      "id": "s4",
+      "selector": "#s4",
+      "title": "VPC 아키텍처",
+      "narration": "VPC의 IP 대역은 10.0.0.0/16. 약 65,000개의 IP를 확보합니다. 그 안에 가용 영역 두 개를 사용하고, 각 영역에 public subnet과 private subnet을 하나씩 두어 총 네 개의 서브넷이 됩니다. Public과 Private의 차이는 AWS의 내장 개념이 아니라 라우팅 결과입니다. Public subnet은 라우팅 테이블이 인터넷 게이트웨이를 가리키도록 설정되어 외부에서 접근 가능하고, Private subnet은 그 경로가 없어 외부에서 직접 접근할 수 없습니다."
+    },
+    {
+      "id": "s5",
+      "selector": "#s5",
+      "title": "실행 명령어 흐름",
+      "narration": "Terraform의 작업 사이클은 크게 다섯 단계입니다. terraform init은 AWS provider를 다운로드합니다. fmt와 validate로 코드의 포맷과 문법을 검증합니다. terraform plan은 현재 코드와 실제 AWS 상태를 비교해, 어떤 리소스가 새로 생성되고 변경되고 삭제될지를 미리 보여 줍니다. terraform apply가 비로소 실제 변경을 일으킵니다. 마지막으로 terraform state list와 terraform output으로 결과를 검증합니다."
+    },
+    {
+      "id": "s6",
+      "selector": "#s6",
+      "title": "생성된 리소스",
+      "narration": "terraform apply 결과 열두 개의 AWS 리소스가 생성되었습니다. VPC 하나, 인터넷 게이트웨이 하나, 서브넷 네 개, 라우트 테이블 두 개, 그리고 서브넷과 라우트 테이블을 연결하는 association 네 개입니다. 여기에 더해 한 개의 데이터 소스가 state에 함께 기록됩니다. 모든 리소스에는 default_tags 설정 덕분에 Project, Environment, ManagedBy 태그가 자동으로 부착됩니다."
+    },
+    {
+      "id": "s7",
+      "selector": "#s7",
+      "title": "결정과 트레이드오프",
+      "narration": "인프라를 처음 구축할 때 가장 중요한 건 코드 자체보다도 왜 그렇게 했는지에 대한 기록입니다. State backend는 로컬 파일로 두었고, 환경은 dev 하나로 단일화했습니다. NAT Gateway는 기본 비활성입니다. 서울 리전 기준으로 idle 상태에서도 한 달에 약 43달러가 청구되기 때문에, 인터넷이 필요한 워크로드를 추가하는 시점에 변수 하나로 토글하도록 만들어 두었습니다. 다중 AZ는 처음부터 두 개의 가용 영역을 잡아 두지 않으면 나중에 데이터베이스나 컨테이너를 올릴 때 다시 작업해야 하기 때문에 필수입니다."
+    },
+    {
+      "id": "s8",
+      "selector": "#s8",
+      "title": "문서화 협업",
+      "narration": "구축이 끝난 뒤, 별도의 저장소인 work-record에 학습 문서를 정리했습니다. 다섯 개의 마크다운 파일로 나누어 작성했고, 이후 세 개의 에이전트가 협업하여 검수와 보강을 진행했습니다. 첫 번째 리뷰어는 기술 정확성을 검증했습니다. 두 번째 리뷰어는 학습자료로서의 가독성을 점검했습니다. 두 리뷰 결과를 종합한 뒤, Editor 에이전트가 총 열여덟 개의 보강을 적용했습니다."
+    },
+    {
+      "id": "s9",
+      "selector": "#s9",
+      "title": "다음 단계",
+      "narration": "VPC라는 토대가 마련되었으니, 다음은 그 위에 서비스를 하나씩 올리는 단계입니다. 비용과 복잡도가 낮은 것부터 점진적으로 진행할 예정입니다. 가장 먼저 떠올릴 후보는 S3. 가장 단순하고 비용도 거의 들지 않으며, IAM 정책과 버전 관리 같은 기초 개념을 익히기에 좋습니다. 이후 단계는 EC2, Lambda, RDS, EKS로 점진적으로 확장합니다."
+    }
+  ]
+}
