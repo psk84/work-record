@@ -54,7 +54,7 @@ export SLACK_DEFAULT_CHANNEL="#dev-notify"   # notify.py 기본 채널 (선택)
 
 ### Claude Code on the web
 MCP 서버는 **환경 설정 레벨**에서 로드된다. 두 가지 방법:
-- **권장**: 세션이 사용하는 레포 **루트에 `.mcp.json`** 을 커밋 → 자동 로드. (이미 `generate-outputs/.mcp.json` 추가됨)
+- **권장**: 세션이 사용하는 레포 **루트에 `.mcp.json`** 을 커밋 → 자동 로드. (별도 레포인 `generate-outputs` 루트에 추가 완료 — 본 레포에는 템플릿 `mcp.example.json`만 둠)
 - 또는 환경 설정 UI에서 MCP 서버를 직접 등록.
 
 변경 후 **새 세션**부터 `slack` MCP 툴이 활성화된다 (현재 진행 중 세션엔 즉시 반영되지 않음).

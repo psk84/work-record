@@ -61,8 +61,11 @@ def main(argv=None):
 
     blocks = None
     if args.blocks_file:
-        with open(args.blocks_file, encoding="utf-8") as fh:
-            blocks = json.load(fh)
+        try:
+            with open(args.blocks_file, encoding="utf-8") as fh:
+                blocks = json.load(fh)
+        except (OSError, json.JSONDecodeError) as exc:
+            parser.error(f"--blocks-file read failed: {exc}")
     if args.text is None and blocks is None:
         parser.error("Provide --text and/or --blocks-file.")
 
